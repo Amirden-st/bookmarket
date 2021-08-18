@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
+import BookListItem from '../book-list-item';
 import { connect } from 'react-redux';
 
 import { withBookstoreService } from '../hoc';
-import booksLoaded from '../../actions';
-
-import BookListItem from '../book-list-item';
-
+import { booksLoaded } from '../../actions';
+import Spinner from '../spinner';
+import './book-list.css';
 
 const BookList = ({bookstoreService, books, booksLoaded}) => {
   useEffect(() => {
-    booksLoaded(bookstoreService.getBooks())
+    bookstoreService.getBooks().then((data) => {
+        booksLoaded(data)
+    })
+
   }, [])
 
   return (
@@ -21,14 +24,12 @@ const BookList = ({bookstoreService, books, booksLoaded}) => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    books: state.books
-  }
-}
+const mapStateToProps = ({ books, loading }) => {
+  return { books, loading };
+};
 
 const mapDispatchToProps = {
-  booksLoaded: booksLoaded
-}
+  booksLoaded
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withBookstoreService(BookList));
